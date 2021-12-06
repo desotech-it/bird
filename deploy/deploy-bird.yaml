@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: bird
+  name: bird
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bird
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: bird
+    spec:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+      - image: r.deso.tech/dsk/bird:latest
+        name: bird
+        resources: {}
+        securityContext:
+#          capabilities:
+#            add: ["SYS_ADMIN", "SETPCAP"]
+          privileged: true
+        ports:
+          - containerPort: 179
+        volumeMounts:
+        - mountPath: /etc/bird/bird.conf
+          name: bird-conf
+      volumes:
+      - name: bird-conf
+        hostPath:
+          path: /etc/bird/bird.conf
+          type: File
+status: {}
